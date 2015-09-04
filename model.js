@@ -5,21 +5,21 @@ var files = require('./files.js'),
   outputPdf = 'doc.pdf';
 
 exports.refreshData = function(completeCallback) {
-  files.findFeatures('C:\\Users\\Matthew\\Documents\\University\\2015\\W15 SENG302 Group Project\\project-1\\src\\test\\resources\\sws\\murcs\\', function(f) {
+	files.findFeatures('C:\\Users\\Matthew\\Documents\\University\\SENG302\\src\\test\\resources\\sws\\murcs\\', function(f) {
     if (f.error) {
-      console.error.log(f.message);
+      console.log(f.message);
       process.exit(-1);
     }
 
     files.loadFiles(f.files, function(d) {
       if (d.error) {
-        console.error.log(d.message);
+        console.log(d.message);
         process.exit(-1);
       }
-
+	  
       data = feature.importData(d.files);
       if (data.error) {
-  			console.error.log(data.message);
+  			console.log(data.message);
   			process.exit(-1);
   		}
       data = data.features;

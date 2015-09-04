@@ -13,9 +13,7 @@ exports.importData = function(newData) {
 	try {
 		for (var feature in newData) {
 			// parse
-			var builder = new Gherkin.AstBuilder();
-			var scanner = new Gherkin.TokenScanner(newData[feature]);
-			var ast = parser.parse(scanner, builder, new Gherkin.TokenMatcher());
+			 var ast = parser.parse(newData[feature]);
 			
 			// ensure it is a manual test
 			var manualTest = false;

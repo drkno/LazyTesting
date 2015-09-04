@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="lazy-testing" data-ng-controller="lazy-testing-controller">
+<head>
+    <meta charset="UTF-8">
+    <title>Lazy Testing</title>
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="section section-left">
+
+        <div data-ng-repeat="scenario in data">
+            <h3>{{scenario.name}}</h3>
+            <table>
+                <tr data-ng-repeat="test in scenario.scenarios">
+                    <th>{{test.name}}</th>
+                    <td>{{test.passing}}</td>
+                    <td>{{test.tester}}</td>
+                    <td>{{test.date}}</td>
+                    <td>{{test.comment}}</td>
+                </tr>
+            </table>
+        </div>
+
+
+        <span class="control-buttons">
+            <input type="button" class="btn btn-danger" value="Reset">
+            <input type="button" class="btn btn-warning" value="Auto Assign">
+        </span>
+    </div>
+    <iframe src="/api/pdf" class="section section-right"></iframe>
+
+    <script>
+        var app = angular.module('lazy-testing', []);
+        app.controller('lazy-testing-controller', function($scope, $http) {
+            $scope.data = [];
+            $scope.loadData = function() {
+                $http.get('/api/current')
+                        .then(function(response) {
+                            //success
+                            $scope.data = response.data;
+                        },
+                        function(response) {
+                            // error
+                            alert('Error! Go fix whatever you broke...');
+                        });
+            };
+            $scope.loadData();
+        });
+    </script>
+</body>
+</html>

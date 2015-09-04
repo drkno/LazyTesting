@@ -1,0 +1,22 @@
+.section {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    height: 99.4%;
+}
+
+.section-left {
+    left: 0;
+    text-align: center;
+    overflow: auto;
+}
+
+.control-buttons {
+    display: inline-block;
+    margin: 10px;
+}
+
+.section-right {
+    right: 0;
+}
