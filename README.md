@@ -6,7 +6,8 @@ A node.js based program for parsing manual gherkin/cucumber feature files and ge
 
 <b>NOTE:</b> Programs such as Skype must not be occupying port 80 before running.
 
-1. Run these commands in the root of the project: ```
+1. Run these commands in the root of the project:
+```
 npm install
 node server.js
 ```
