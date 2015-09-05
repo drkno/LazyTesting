@@ -64,7 +64,7 @@ exports.setItemData = function(featureIndex, scenarioIndex, tester, passing, com
 };
 
 exports.autoAssign = function() {
-  var members = ['Dion','Jay','James','Matthew','Hayden','Daniel'];
+  var members = ['Dion','Jay','James','Matthew','Haydon','Daniel'];
   var sum = 0, pos = 0;
   for (var i = 0; i < data.length; i++) {
     sum += data[i].scenarios.length;
