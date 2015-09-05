@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" data-ng-app="lazy-testing" data-ng-controller="lazy-testing-controller">
 <head>
     <meta charset="UTF-8">
@@ -10,44 +10,153 @@
 </head>
 <body>
     <div class="section section-left">
+        <span class="control-buttons">
+            <input type="button" class="btn btn-success" value="Refresh" data-ng-click="loadData()">
+            <input type="button" class="btn btn-danger" value="Reset" data-ng-click="reset()">
+            <input type="button" class="btn btn-warning" value="Auto Assign" data-ng-click="autoAssign()">
+        </span>
 
         <div data-ng-repeat="scenario in data">
             <h3>{{scenario.name}}</h3>
-            <table>
-                <tr data-ng-repeat="test in scenario.scenarios">
-                    <th>{{test.name}}</th>
-                    <td>{{test.passing}}</td>
-                    <td>{{test.tester}}</td>
-                    <td>{{test.date}}</td>
-                    <td>{{test.comment}}</td>
+            <table style="width: 100%" class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Test</th>
+                    <th>Is Passing</th>
+                    <th>Tester</th>
+                    <th>Last Tested Date</th>
+                    <th>Comment</th>
+                </tr>
+                </thead>
+                <tr data-ng-repeat="test in scenario.scenarios" style="cursor: pointer"> 
+                    <th style="text-align: left; font-weight: bold" data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.name}}</th>
+                    <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.passing}}</td>
+                    <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.tester}}</td>
+                    <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.date}}</td>
+                    <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.comment}}</td>
+                    <td colspan="5" data-ng-show="get('edit-' + $index + '-' + $parent.$index)">
+                        <h4>{{test.name}}</h4>
+                        <hr/>
+                        <label for="assigned-to-{{$parent.$index}}-{{$index}}-assigned">Assigned To</label>
+                        <select id="assigned-to-{{$parent.$index}}-{{$index}}-assigned" data-ng-model="test.tester">
+                            <option value="Matthew">Matthew</option>
+                            <option value="Jay">Jay</option>
+                            <option value="James">James</option>
+                            <option value="Dion">Dion</option>
+                            <option value="Daniel">Daniel</option>
+                            <option value="Haydon">Haydon</option>
+                        </select>
+                        <label for="assigned-to-{{$parent.$index}}-{{$index}}-passing">Does it pass?</label>
+                        <select id="assigned-to-{{$parent.$index}}-{{$index}}-passing" data-ng-model="test.passing">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                        <label for="assigned-to-{{$parent.$index}}-{{$index}}-comments">Comments</label>
+                        <textarea id="assigned-to-{{$parent.$index}}-{{$index}}-comments" data-ng-model="test.comment"></textarea>
+                        
+                        <span class="control-buttons">
+                            <input type="button" class="btn btn-success" value="Save" data-ng-click="save($parent.$index, $index); toggle('edit-' + $index + '-' + $parent.$index);">
+                            <input type="button" class="btn btn-danger" value="Cancel" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index); loadData()">
+                        </span>
+                    </td>
                 </tr>
             </table>
         </div>
 
 
         <span class="control-buttons">
-            <input type="button" class="btn btn-danger" value="Reset">
-            <input type="button" class="btn btn-warning" value="Auto Assign">
+            <input type="button" class="btn btn-success" value="Refresh" data-ng-click="loadData()">
+            <input type="button" class="btn btn-danger" value="Reset" data-ng-click="reset()">
+            <input type="button" class="btn btn-warning" value="Auto Assign" data-ng-click="autoAssign()">
         </span>
     </div>
-    <iframe src="/api/pdf" class="section section-right"></iframe>
+    <iframe id="pdf-frame" data-ng-src="{{pdfUrl}}" class="section section-right"></iframe>
 
     <script>
         var app = angular.module('lazy-testing', []);
         app.controller('lazy-testing-controller', function($scope, $http) {
             $scope.data = [];
+            $scope.pdfUrl = '/api/pdf';
             $scope.loadData = function() {
                 $http.get('/api/current')
                         .then(function(response) {
                             //success
                             $scope.data = response.data;
+                            $scope.updatePdf();
                         },
                         function(response) {
                             // error
-                            alert('Error! Go fix whatever you broke...');
+                            alert('AN ERROR! Damn you. I order you to go fix whatever you broke...');
                         });
             };
             $scope.loadData();
+
+            $scope.autoAssign = function() {
+                if (!confirm("Are you sure? This action is irreversable and everyone will hate you for it.")) {
+                    return;
+                }
+                $http.get('/api/autoassign')
+                    .then(function(response) {
+                            $scope.loadData();
+                        },
+                    function(response) {
+                        // error
+                        alert('AN ERROR! Damn you. I order you to go fix whatever you broke...');
+                    });
+            };
+
+            $scope.reset = function() {
+                if (!confirm("Are you sure? This action is irreversable and everyone will hate you for it.")) {
+                    return;
+                }
+                $http.get('/api/reset')
+                    .then(function (response) {
+                        $scope.loadData();
+                    },
+                    function (response) {
+                        // error
+                        alert('AN ERROR! Damn you. I order you to go fix whatever you broke...');
+                    });
+            };
+
+            $scope.toggle = function(element) {
+                if (!$scope[element]) {
+                    $scope[element] = true;
+                } else {
+                    $scope[element] = !$scope[element];
+                }
+            };
+
+            $scope.get = function(element) {
+                return $scope[element] === true;
+            };
+
+            $scope.save = function (parentIndex, index) {
+                var response = {
+                    feature: parentIndex,
+                    scenario: index,
+                    tester: $scope.data[parentIndex].scenarios[index].tester,
+                    passing: ($scope.data[parentIndex].scenarios[index].passing == "true"),
+                    comment: $scope.data[parentIndex].scenarios[index].comment
+                };
+
+                $http.post('/api/current', response)
+                    .then(function(response) {
+                        //done
+                            $scope.loadData();
+                        },
+                    function(response) {
+                        // error
+                        alert('AN ERROR! Damn you. I order you to go fix whatever you broke...');
+                    });
+            };
+
+            $scope.updatePdf = function () {
+                $scope.pdfUrl = '';
+                setTimeout(function() {
+                    $scope.pdfUrl = '/api/pdf';
+                }, 1000);
+            };
         });
     </script>
 </body>

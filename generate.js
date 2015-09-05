@@ -12,7 +12,7 @@ exports.generatePdf = function(data, location, callback) {
 				scenario.name,
 				scenario.tester,
 				scenario.date,
-				scenario.passing,
+				scenario.passing ? "Yes" : "No",
 				scenario.comment
 			]);
 		}
@@ -49,5 +49,5 @@ exports.generatePdf = function(data, location, callback) {
 	
 	var markDown = "# Manual Testing Plan\n" + t + "\n\n" + s;
 	
-	markdownpdf().from.string(markDown).to(location, callback);
+	markdownpdf({cssPath:"markdown.css"}).from.string(markDown).to(location, callback);
 };
