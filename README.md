@@ -5,10 +5,16 @@ A node.js based program for parsing manual gherkin/cucumber feature files and ge
 ### Running
 
 <b>NOTE:</b> Programs such as Skype must not be occupying port 80 before running.
-
-1. Run these commands in the root of the project:
+First edit line 8 of `model.js` to point to your directory containing cucumber test files.
+Next run these commands in the root of the project:
 ```
 npm install
 node server.js
 ```
-2. Navigate to localhost:80 in a web browser.
+Then navigate to localhost:80 in a web browser.
+
+### Credit
+To whomever I borrowed the markdown.css from. It was in an open source repo somewhere that I can no longer locate.
+
+### License
+MIT License on all origional code. All other code is under it own respective licenses.
