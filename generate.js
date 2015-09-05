@@ -29,7 +29,7 @@ exports.generatePdf = function(data, location, callback) {
 			case 'Jay': sum[1]++; break;
 			case 'James': sum[2]++; break;
 			case 'Matthew': sum[3]++; break;
-			case 'Hayden': sum[4]++; break;
+			case 'Haydon': sum[4]++; break;
 			case 'Daniel': sum[5]++; break;
 		}
 		total++;
@@ -41,7 +41,7 @@ exports.generatePdf = function(data, location, callback) {
 		['Jay',sum[1]],
 		['James',sum[2]],
 		['Matthew',sum[3]],
-		['Hayden',sum[4]],
+		['Haydon',sum[4]],
 		['Daniel',sum[5]],
 		['Total Tests',total]
 	];
