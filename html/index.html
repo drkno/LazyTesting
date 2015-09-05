@@ -9,69 +9,88 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="section section-left">
-        <span class="control-buttons">
+<div class="section section-left">
+    <span class="control-buttons">
             <input type="button" class="btn btn-success" value="Refresh" data-ng-click="loadData()">
+            <input type="button" class="btn btn-success" value="Reload PDF" data-ng-click="updatePdf()">
             <input type="button" class="btn btn-danger" value="Reset" data-ng-click="reset()">
             <input type="button" class="btn btn-warning" value="Auto Assign" data-ng-click="autoAssign()">
         </span>
 
-        <div data-ng-repeat="scenario in data">
-            <h3>{{scenario.name}}</h3>
-            <table style="width: 100%" class="table table-hover">
-                <thead>
-                <tr>
-                    <th>Test</th>
-                    <th>Is Passing</th>
-                    <th>Tester</th>
-                    <th>Last Tested Date</th>
-                    <th>Comment</th>
-                </tr>
-                </thead>
-                <tr data-ng-repeat="test in scenario.scenarios" style="cursor: pointer"> 
-                    <th style="text-align: left; font-weight: bold" data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.name}}</th>
-                    <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.passing}}</td>
-                    <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.tester}}</td>
-                    <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.date}}</td>
-                    <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.comment}}</td>
-                    <td colspan="5" data-ng-show="get('edit-' + $index + '-' + $parent.$index)">
-                        <h4>{{test.name}}</h4>
-                        <hr/>
-                        <label for="assigned-to-{{$parent.$index}}-{{$index}}-assigned">Assigned To</label>
-                        <select id="assigned-to-{{$parent.$index}}-{{$index}}-assigned" data-ng-model="test.tester">
-                            <option value="Matthew">Matthew</option>
-                            <option value="Jay">Jay</option>
-                            <option value="James">James</option>
-                            <option value="Dion">Dion</option>
-                            <option value="Daniel">Daniel</option>
-                            <option value="Haydon">Haydon</option>
-                        </select>
-                        <label for="assigned-to-{{$parent.$index}}-{{$index}}-passing">Does it pass?</label>
-                        <select id="assigned-to-{{$parent.$index}}-{{$index}}-passing" data-ng-model="test.passing">
-                            <option value="true">Yes</option>
-                            <option value="false">No</option>
-                        </select>
-                        <label for="assigned-to-{{$parent.$index}}-{{$index}}-comments">Comments</label>
-                        <textarea id="assigned-to-{{$parent.$index}}-{{$index}}-comments" data-ng-model="test.comment"></textarea>
-                        
-                        <span class="control-buttons">
-                            <input type="button" class="btn btn-success" value="Save" data-ng-click="save($parent.$index, $index); toggle('edit-' + $index + '-' + $parent.$index);">
-                            <input type="button" class="btn btn-danger" value="Cancel" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index); loadData()">
-                        </span>
-                    </td>
-                </tr>
-            </table>
-        </div>
+    <table style="width: 100%" class="table table-hover">
+        <tbody data-ng-repeat="scenario in data">
+        <tr>
+            <th colspan="5">
+                <h3>{{scenario.name}}</h3>
+            </th>
+        </tr>
+        <tr>
+            <th>Test</th>
+            <th style="white-space: nowrap">Is Passing</th>
+            <th>Tester</th>
+            <th>Last Tested Date</th>
+            <th>Comment</th>
+        </tr>
+        <tr data-ng-repeat="test in scenario.scenarios" style="cursor: pointer">
+            <th style="text-align: left; font-weight: bold" data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.name}}</th>
+            <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.passing ? "Yes" : "No"}}</td>
+            <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.tester}}</td>
+            <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.date}}</td>
+            <td data-ng-hide="get('edit-' + $index + '-' + $parent.$index)" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index)">{{test.comment}}</td>
+            <td colspan="5" data-ng-show="get('edit-' + $index + '-' + $parent.$index)">
+                <h4>{{test.name}}</h4>
+                <hr/>
+                <p>
+                    <label for="assigned-to-{{$parent.$index}}-{{$index}}-assigned">Assigned To</label>
+                </p>
+                <p>
+                    <select id="assigned-to-{{$parent.$index}}-{{$index}}-assigned" data-ng-model="test.tester">
+                        <option value="Matthew">Matthew</option>
+                        <option value="Jay">Jay</option>
+                        <option value="James">James</option>
+                        <option value="Dion">Dion</option>
+                        <option value="Daniel">Daniel</option>
+                        <option value="Haydon">Haydon</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="assigned-to-{{$parent.$index}}-{{$index}}-passing">Does it pass?</label>
+                </p>
+                <p>
+                    <select id="assigned-to-{{$parent.$index}}-{{$index}}-passing" data-ng-options="boolToStr(item) for item in [true, false]" data-ng-model="test.passing">
+                    </select>
+                </p>
+                <p>
+                    <label for="assigned-to-{{$parent.$index}}-{{$index}}-comments">Comments</label>
+                </p>
+                <p>
+                    <textarea id="assigned-to-{{$parent.$index}}-{{$index}}-comments" data-ng-model="test.comment"></textarea>
+                </p>
+                <p>
+                    <span class="control-buttons">
+                                <input type="button" class="btn btn-success" value="Save" data-ng-click="save($parent.$index, $index); toggle('edit-' + $index + '-' + $parent.$index);">
+                                <input type="button" class="btn btn-danger" value="Cancel" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index); loadData()">
+                            </span>
+                </p>
+                <p>
+                    <div class="information">
+                        Note that the PDF will not update without manualy pressing the refresh button.<br/>
+                        This is thanks to iFrame implementations. Thanks Javascript!
+                    </div>
+                </p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-
-        <span class="control-buttons">
+    <span class="control-buttons">
             <input type="button" class="btn btn-success" value="Refresh" data-ng-click="loadData()">
+            <input type="button" class="btn btn-success" value="Reload PDF" data-ng-click="updatePdf()">
             <input type="button" class="btn btn-danger" value="Reset" data-ng-click="reset()">
             <input type="button" class="btn btn-warning" value="Auto Assign" data-ng-click="autoAssign()">
         </span>
     </div>
-    <iframe id="pdf-frame" data-ng-src="{{pdfUrl}}" class="section section-right"></iframe>
-
+    <iframe id="pdf-frame" src="{{pdfUrl}}" class="section section-right"></iframe>
     <script>
         var app = angular.module('lazy-testing', []);
         app.controller('lazy-testing-controller', function($scope, $http) {
@@ -82,7 +101,6 @@
                         .then(function(response) {
                             //success
                             $scope.data = response.data;
-                            $scope.updatePdf();
                         },
                         function(response) {
                             // error
@@ -136,7 +154,7 @@
                     feature: parentIndex,
                     scenario: index,
                     tester: $scope.data[parentIndex].scenarios[index].tester,
-                    passing: ($scope.data[parentIndex].scenarios[index].passing == "true"),
+                    passing: $scope.data[parentIndex].scenarios[index].passing,
                     comment: $scope.data[parentIndex].scenarios[index].comment
                 };
 
@@ -152,11 +170,12 @@
             };
 
             $scope.updatePdf = function () {
-                $scope.pdfUrl = '';
-                setTimeout(function() {
-                    $scope.pdfUrl = '/api/pdf';
-                }, 1000);
+                $scope.pdfUrl = '/api/pdf' + "?whyNoIframeReload=" + (new Date()).getTime();
             };
+
+            $scope.boolToStr = function(item) {
+                return item ? 'Yes' : 'No';
+            }
         });
     </script>
 </body>

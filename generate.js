@@ -6,14 +6,15 @@ exports.generatePdf = function(data, location, callback) {
 	for (var f in data) {
 		var feature = data[f];
 		for (var i = 0; i < feature.scenarios.length; i++) {
-			var scenario = feature.scenarios[i];
+            var scenario = feature.scenarios[i];
+
 			tableData.push([
-				i === 0 ? feature.name : '',
-				scenario.name,
-				scenario.tester,
+				i === 0 ? feature.name.replace(/\|/g, "&#124;") : '',
+				scenario.name.replace(/\|/g, "&#124;"),
+				scenario.tester.replace(/\|/g, "&#124;"),
 				scenario.date,
 				scenario.passing ? "Yes" : "No",
-				scenario.comment
+				scenario.comment.replace(/\|/g, "&#124;")
 			]);
 		}
 	}

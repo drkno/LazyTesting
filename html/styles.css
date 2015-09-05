@@ -2,7 +2,6 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 50%;
     height: 99.4%;
 }
 
@@ -10,6 +9,7 @@
     left: 0;
     text-align: center;
     overflow: auto;
+    width: 60%;
 }
 
 .control-buttons {
@@ -19,4 +19,5 @@
 
 .section-right {
     right: 0;
+    width: 40%;
 }

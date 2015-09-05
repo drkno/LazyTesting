@@ -3,7 +3,8 @@ var express = require('express'),
 	bodyParser = require('body-parser'),
     model = require('./model.js'),
     path = require('path'),
-    mime = require('mime');
+    mime = require('mime'),
+    modificationInProgress = false;
 
 var	server = express();
 server.use(bodyParser.json());
@@ -39,7 +40,8 @@ server.use(function(req, res, next) {
 });
 
 // update model
-server.post('/api/current', function(req, res) {
+server.post('/api/current', function (req, res) {
+    modificationInProgress = true;
 	try {
 		var json = req.body;
 		model.setItemData(json.feature, json.scenario, json.tester, json.passing, json.comment);
@@ -49,28 +51,41 @@ server.post('/api/current', function(req, res) {
 	catch(e) {
 		res.contentType("application/json");
 		res.status(500).send('{"complete":false, "message":' + JSON.stringify(e) + ',"data":' + JSON.stringify(req.body) + '}');
-	}
+    }
+    modificationInProgress = false;
 });
 
 // get model
-server.get('/api/current', function(req, res) {
-	res.contentType("application/json");
-	res.send(model.currentState());
+server.get('/api/current', function (req, res) {
+    var waitFunction = function() {
+        if (modificationInProgress) {
+            setTimeout(waitFunction, 200);
+        }
+        res.contentType("application/json");
+        res.send(model.currentState());
+    };
+    waitFunction();
 });
 
 // automatically assign members
-server.get('/api/autoassign', function(req, res) {
+server.get('/api/autoassign', function (req, res) {
 	model.autoAssign();
 	res.contentType("application/json");
 	res.send('{"complete":true}');
 });
 
 // get the pdf
-server.get('/api/pdf', function(req, res) {
-  fs.readFile('doc.pdf', function (err,data){
-     res.contentType("application/pdf");
-     res.send(data);
-  });
+server.get('/api/pdf', function (req, res) {
+    var waitFunction = function () {
+        if (modificationInProgress) {
+            setTimeout(waitFunction, 200);
+        }
+        fs.readFile('doc.pdf', function (err, data) {
+            res.contentType("application/pdf");
+            res.send(data);
+        });
+    };
+    waitFunction();
 });
 
 // reset the api

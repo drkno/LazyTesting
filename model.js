@@ -49,7 +49,7 @@ exports.setItemData = function(featureIndex, scenarioIndex, tester, passing, com
 
   var item = data[featureIndex].scenarios[scenarioIndex];
   if (tester && typeof tester === "string") item.tester = tester;
-  if (passing && typeof passing === "boolean") item.passing = passing;
+  if (typeof passing === "boolean") item.passing = passing;
   if (comment && typeof comment === "string") item.comment = comment;
 
   var today = new Date();
