@@ -21,3 +21,16 @@
     right: 0;
     width: 40%;
 }
+
+select {
+    min-width: 70%;
+    text-align: center;
+}
+
+textarea {
+    width: 100%;
+}
+
+.editpane {
+    width: 50%;
+}

@@ -24,7 +24,10 @@ exports.refreshData = function (completeCallback) {
 };
 
 exports.currentState = function() {
-  return JSON.stringify(data);
+    return JSON.stringify({
+        tests: data,
+        members: teamMembers
+    });
 };
 
 exports.updatePdf = function(callback) {

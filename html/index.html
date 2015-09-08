@@ -42,51 +42,49 @@
                 <h4>{{test.name}}</h4>
                 <hr/>
 				<table style="width:100%;">
-					<tr>
-						<td>
-							<p>
-								<label for="assigned-to-{{$parent.$index}}-{{$index}}-assigned">Assigned To</label>
-							</p>
-							<p>
-								<select id="assigned-to-{{$parent.$index}}-{{$index}}-assigned" data-ng-model="test.tester">
-									<option value="Matthew">Matthew</option>
-									<option value="Jay">Jay</option>
-									<option value="James">James</option>
-									<option value="Dion">Dion</option>
-									<option value="Daniel">Daniel</option>
-									<option value="Haydon">Haydon</option>
-								</select>
-							</p>
-							<p>
-								<label for="assigned-to-{{$parent.$index}}-{{$index}}-passing">Does it pass?</label>
-							</p>
-							<p>
-								<select id="assigned-to-{{$parent.$index}}-{{$index}}-passing" data-ng-options="boolToStr(item) for item in [true, false]" data-ng-model="test.passing">
-								</select>
-							</p>
-							<p>
-								<label for="assigned-to-{{$parent.$index}}-{{$index}}-comments">Comments</label>
-							</p>
-							<p>
-								<textarea id="assigned-to-{{$parent.$index}}-{{$index}}-comments" data-ng-model="test.comment"></textarea>
-							</p>
-							<p>
-								<span class="control-buttons">
-											<input type="button" class="btn btn-success" value="Save" data-ng-click="save($parent.$index, $index); toggle('edit-' + $index + '-' + $parent.$index);">
-											<input type="button" class="btn btn-danger" value="Cancel" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index); loadData()">
-										</span>
-							</p>
-							<p>
-								<div class="information">
-									Note that the PDF will not update without manualy pressing the refresh button.<br/>
-									This is thanks to iFrame implementations. Thanks Javascript!
-								</div>
-							</p>
-						</td>
-						<td>
-							<code data-ng-bind-html="format(test.test)}}"></code>
-						</td>
-					</tr>
+				    <tr>
+				        <td class="editpane">
+				            <p>
+				                <label for="assigned-to-{{$parent.$index}}-{{$index}}-assigned">Assigned To</label>
+				            </p>
+				            <p>
+				                <select id="assigned-to-{{$parent.$index}}-{{$index}}-assigned" data-ng-options="member for member in members" data-ng-model="test.tester">
+				                </select>
+				            </p>
+				            <p>
+				                <label for="assigned-to-{{$parent.$index}}-{{$index}}-passing">Does it pass?</label>
+				            </p>
+				            <p>
+				                <select id="assigned-to-{{$parent.$index}}-{{$index}}-passing" data-ng-options="boolToStr(item) for item in [true, false]" data-ng-model="test.passing">
+				                </select>
+				            </p>
+				            <p>
+				                <label for="assigned-to-{{$parent.$index}}-{{$index}}-comments">Comments</label>
+				            </p>
+				            <p>
+				                <textarea id="assigned-to-{{$parent.$index}}-{{$index}}-comments" data-ng-model="test.comment"></textarea>
+				            </p>
+				        </td>
+				        <td class="editpane">
+				            <code data-ng-bind-html="format(test.test) | html"></code>
+				        </td>
+				    </tr>
+				    <tr>
+				        <td colspan="2">
+                            <p>
+                                <span class="control-buttons">
+                                    <input type="button" class="btn btn-success" value="Save" data-ng-click="save($parent.$index, $index); toggle('edit-' + $index + '-' + $parent.$index);">
+                                    <input type="button" class="btn btn-danger" value="Cancel" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index); loadData()">
+                                </span>
+                            </p>
+                            <p>
+                                <div class="information">
+                                    Note that the PDF will not update without manualy pressing the refresh button.<br />
+                                    This is thanks to iFrame implementations. Thanks Javascript!
+                                </div>
+                            </p>
+				        </td>
+				    </tr>
 				</table>
             </td>
         </tr>
@@ -102,111 +100,6 @@
         </span>
     </div>
     <iframe id="pdf-frame" src="{{pdfUrl}}" class="section section-right"></iframe>
-    <script>
-        var app = angular.module('lazy-testing', []);
-        app.controller('lazy-testing-controller', function($scope, $http) {
-            $scope.data = [];
-            $scope.pdfUrl = '/api/pdf';
-            $scope.loadData = function() {
-                $http.get('/api/current')
-                        .then(function(response) {
-                            //success
-                            $scope.data = response.data;
-                        },
-                        function(response) {
-                            // error
-                            alert('AN ERROR! Damn you. I order you to go fix whatever you broke...');
-                        });
-            };
-            $scope.loadData();
-
-            $scope.autoAssign = function() {
-                if (!confirm("Are you sure? This action is irreversable and everyone will hate you for it.")) {
-                    return;
-                }
-                $http.get('/api/autoassign')
-                    .then(function(response) {
-                            $scope.loadData();
-                        },
-                    function(response) {
-                        // error
-                        alert('AN ERROR! Damn you. I order you to go fix whatever you broke...');
-                    });
-            };
-
-            $scope.reset = function() {
-                if (!confirm("Are you sure? This action is irreversable and everyone will hate you for it.")) {
-                    return;
-                }
-                $http.get('/api/reset')
-                    .then(function (response) {
-                        $scope.loadData();
-                    },
-                    function (response) {
-                        // error
-                        alert('AN ERROR! Damn you. I order you to go fix whatever you broke...');
-                    });
-            };
-
-            $scope.toggle = function(element) {
-                if (!$scope[element]) {
-                    $scope[element] = true;
-                } else {
-                    $scope[element] = !$scope[element];
-                }
-            };
-
-            $scope.get = function(element) {
-                return $scope[element] === true;
-            };
-
-            $scope.save = function (parentIndex, index) {
-                var response = {
-                    feature: parentIndex,
-                    scenario: index,
-                    tester: $scope.data[parentIndex].scenarios[index].tester,
-                    passing: $scope.data[parentIndex].scenarios[index].passing,
-                    comment: $scope.data[parentIndex].scenarios[index].comment
-                };
-
-                $http.post('/api/current', response)
-                    .then(function(response) {
-                        //done
-                            $scope.loadData();
-                        },
-                    function(response) {
-                        // error
-                        alert('AN ERROR! Damn you. I order you to go fix whatever you broke...');
-                    });
-            };
-
-            $scope.updatePdf = function () {
-                $scope.pdfUrl = '/api/pdf' + "?whyNoIframeReload=" + (new Date()).getTime();
-            };
-
-            $scope.boolToStr = function(item) {
-                return item ? 'Yes' : 'No';
-            };
-			
-			$scope.loadNew = function() {
-				if (!confirm("Are you sure? This action is irreversable and everyone will hate you for it.")) {
-                    return;
-                }
-				$http.get('/api/update')
-					.then(function(response) {
-                        //done
-                            $scope.loadData();
-                        },
-                    function(response) {
-                        // error
-                        alert('AN ERROR! Damn you. I order you to go fix whatever you broke...');
-                    });
-			};
-			
-			$scope.format = function (data) {
-				return data.replace(/\n/g, '<br />');
-			};
-        });
-    </script>
+    <script type="text/javascript" src="controller.js"></script>
 </body>
 </html>

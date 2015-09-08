@@ -16,21 +16,21 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
-    <Content Include="html\.gitignore" />
+    <Content Include="config.json" />
     <Content Include="html\404.html" />
     <Content Include="html\index.html" />
-    <Content Include="html\LazyTestingFrontend.iml" />
     <Content Include="html\styles.css" />
-    <Content Include="styles\markdown.css" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Compile Include="core\feature.js" />
     <Compile Include="core\files.js" />
     <Compile Include="core\generate.js" />
     <Compile Include="core\scanner.js" />
+    <Compile Include="html\controller.js" />
     <Compile Include="lazy.js" />
     <Compile Include="core\model.js" />
     <Compile Include="core\server.js" />
+    <Content Include="styles\default.css" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="html\" />
