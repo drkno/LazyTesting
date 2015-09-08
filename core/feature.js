@@ -31,10 +31,16 @@ exports.importData = function(newData) {
 			var scenarios = [];
 			for (var s in ast.scenarioDefinitions) {
 				var scenario = ast.scenarioDefinitions[s];
+				var test = '';
+				for (var i = 0; i < scenario.steps.length; i++) {
+					test += scenario.steps[i].keyword + " " + scenario.steps[i].text + "\r\n";
+				}
+				
 				scenarios.push({
 					name: scenario.name,
 					tester: '',
 					comment: '',
+					test: test,
 					date: null,
 					passing: false
 				});

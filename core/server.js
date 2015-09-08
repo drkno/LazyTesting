@@ -4,9 +4,11 @@ var express = require('express'),
     model = require('./model.js'),
     path = require('path'),
     mime = require('mime'),
-    modificationInProgress = false;
+    server = express(),
+    modificationInProgress = false,
+    htmlRoot = null,
+    serverPort = null;
 
-var	server = express();
 server.use(bodyParser.json());
 
 // Add headers and serve static files
@@ -23,12 +25,21 @@ server.use(function(req, res, next) {
             req.url = "/index.html";
         }
         
-        var file = path.join(__dirname, 'html', req.url);
+        var file = path.join(htmlRoot, req.url);
         var type = mime.lookup(file);
         fs.readFile(file, function (err, data) {
             if (err) {
-                res.contentType("application/json");
-                res.status(404).send('{"complete":false, "message":"file not found"}');
+                fs.readFile(path.join(htmlRoot, '404.html'), function(err, data) {
+                    if (err) {
+                        res.contentType("application/json");
+                        res.status(404).send('{"complete":false, "message":"file not found"}');
+                    } else {
+                        res.status(404);
+                        res.contentType("text/html");
+                        res.send(data);
+                    }
+                });
+                
                 return;
             }
             res.contentType(type);
@@ -67,6 +78,21 @@ server.get('/api/current', function (req, res) {
     waitFunction();
 });
 
+// retreive updates
+server.get('/api/update', function (req, res) {
+	modificationInProgress = true;
+	try {
+		model.update();
+		res.contentType("application/json");
+		res.send('{"complete":true}');
+	}
+	catch(e) {
+		res.contentType("application/json");
+		res.status(500).send('{"complete":false, "message":' + JSON.stringify(e) + ',"data":' + JSON.stringify(req.body) + '}');
+    }
+    modificationInProgress = false;
+});
+
 // automatically assign members
 server.get('/api/autoassign', function (req, res) {
 	model.autoAssign();
@@ -96,7 +122,13 @@ server.get('/api/reset', function (req, res) {
 	});
 });
 
-// startup
-model.refreshData(function() {
-	server.listen(80);
-});
+exports.setup = function (port, html) {
+    serverPort = port;
+    htmlRoot = html;
+};
+
+exports.start = function () {
+    model.refreshData(function () {
+        server.listen(serverPort);
+    });
+};

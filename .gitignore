@@ -1,2 +1,5 @@
 obj/
 node_modules/
+config.json
+*.dat
+*.pdf

@@ -15,6 +15,7 @@
             <input type="button" class="btn btn-success" value="Reload PDF" data-ng-click="updatePdf()">
             <input type="button" class="btn btn-danger" value="Reset" data-ng-click="reset()">
             <input type="button" class="btn btn-warning" value="Auto Assign" data-ng-click="autoAssign()">
+            <input type="button" class="btn btn-warning" value="Update Tests" data-ng-click="loadNew()">
         </span>
 
     <table style="width: 100%" class="table table-hover">
@@ -40,44 +41,53 @@
             <td colspan="5" data-ng-show="get('edit-' + $index + '-' + $parent.$index)">
                 <h4>{{test.name}}</h4>
                 <hr/>
-                <p>
-                    <label for="assigned-to-{{$parent.$index}}-{{$index}}-assigned">Assigned To</label>
-                </p>
-                <p>
-                    <select id="assigned-to-{{$parent.$index}}-{{$index}}-assigned" data-ng-model="test.tester">
-                        <option value="Matthew">Matthew</option>
-                        <option value="Jay">Jay</option>
-                        <option value="James">James</option>
-                        <option value="Dion">Dion</option>
-                        <option value="Daniel">Daniel</option>
-                        <option value="Haydon">Haydon</option>
-                    </select>
-                </p>
-                <p>
-                    <label for="assigned-to-{{$parent.$index}}-{{$index}}-passing">Does it pass?</label>
-                </p>
-                <p>
-                    <select id="assigned-to-{{$parent.$index}}-{{$index}}-passing" data-ng-options="boolToStr(item) for item in [true, false]" data-ng-model="test.passing">
-                    </select>
-                </p>
-                <p>
-                    <label for="assigned-to-{{$parent.$index}}-{{$index}}-comments">Comments</label>
-                </p>
-                <p>
-                    <textarea id="assigned-to-{{$parent.$index}}-{{$index}}-comments" data-ng-model="test.comment"></textarea>
-                </p>
-                <p>
-                    <span class="control-buttons">
-                                <input type="button" class="btn btn-success" value="Save" data-ng-click="save($parent.$index, $index); toggle('edit-' + $index + '-' + $parent.$index);">
-                                <input type="button" class="btn btn-danger" value="Cancel" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index); loadData()">
-                            </span>
-                </p>
-                <p>
-                    <div class="information">
-                        Note that the PDF will not update without manualy pressing the refresh button.<br/>
-                        This is thanks to iFrame implementations. Thanks Javascript!
-                    </div>
-                </p>
+				<table style="width:100%;">
+					<tr>
+						<td>
+							<p>
+								<label for="assigned-to-{{$parent.$index}}-{{$index}}-assigned">Assigned To</label>
+							</p>
+							<p>
+								<select id="assigned-to-{{$parent.$index}}-{{$index}}-assigned" data-ng-model="test.tester">
+									<option value="Matthew">Matthew</option>
+									<option value="Jay">Jay</option>
+									<option value="James">James</option>
+									<option value="Dion">Dion</option>
+									<option value="Daniel">Daniel</option>
+									<option value="Haydon">Haydon</option>
+								</select>
+							</p>
+							<p>
+								<label for="assigned-to-{{$parent.$index}}-{{$index}}-passing">Does it pass?</label>
+							</p>
+							<p>
+								<select id="assigned-to-{{$parent.$index}}-{{$index}}-passing" data-ng-options="boolToStr(item) for item in [true, false]" data-ng-model="test.passing">
+								</select>
+							</p>
+							<p>
+								<label for="assigned-to-{{$parent.$index}}-{{$index}}-comments">Comments</label>
+							</p>
+							<p>
+								<textarea id="assigned-to-{{$parent.$index}}-{{$index}}-comments" data-ng-model="test.comment"></textarea>
+							</p>
+							<p>
+								<span class="control-buttons">
+											<input type="button" class="btn btn-success" value="Save" data-ng-click="save($parent.$index, $index); toggle('edit-' + $index + '-' + $parent.$index);">
+											<input type="button" class="btn btn-danger" value="Cancel" data-ng-click="toggle('edit-' + $index + '-' + $parent.$index); loadData()">
+										</span>
+							</p>
+							<p>
+								<div class="information">
+									Note that the PDF will not update without manualy pressing the refresh button.<br/>
+									This is thanks to iFrame implementations. Thanks Javascript!
+								</div>
+							</p>
+						</td>
+						<td>
+							<code data-ng-bind-html="format(test.test)}}"></code>
+						</td>
+					</tr>
+				</table>
             </td>
         </tr>
         </tbody>
@@ -88,6 +98,7 @@
             <input type="button" class="btn btn-success" value="Reload PDF" data-ng-click="updatePdf()">
             <input type="button" class="btn btn-danger" value="Reset" data-ng-click="reset()">
             <input type="button" class="btn btn-warning" value="Auto Assign" data-ng-click="autoAssign()">
+            <input type="button" class="btn btn-warning" value="Update Tests" data-ng-click="loadNew()">
         </span>
     </div>
     <iframe id="pdf-frame" src="{{pdfUrl}}" class="section section-right"></iframe>
@@ -175,7 +186,26 @@
 
             $scope.boolToStr = function(item) {
                 return item ? 'Yes' : 'No';
-            }
+            };
+			
+			$scope.loadNew = function() {
+				if (!confirm("Are you sure? This action is irreversable and everyone will hate you for it.")) {
+                    return;
+                }
+				$http.get('/api/update')
+					.then(function(response) {
+                        //done
+                            $scope.loadData();
+                        },
+                    function(response) {
+                        // error
+                        alert('AN ERROR! Damn you. I order you to go fix whatever you broke...');
+                    });
+			};
+			
+			$scope.format = function (data) {
+				return data.replace(/\n/g, '<br />');
+			};
         });
     </script>
 </body>

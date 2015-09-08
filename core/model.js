@@ -1,32 +1,26 @@
-var files = require('./files.js'),
-	feature = require('./feature.js'),
-	generate = require('./generate.js'),
-	data = null,
-  outputPdf = 'doc.pdf';
+var generate = require('./generate.js'),
+    scanner = require('./scanner.js'),
+    data = null,
+    teamMembers = null;
 
-exports.refreshData = function(completeCallback) {
-	files.findFeatures('C:\\Users\\Matthew\\Documents\\University\\SENG302\\src\\test\\resources\\sws\\murcs\\', function(f) {
-    if (f.error) {
-      console.log(f.message);
-      process.exit(-1);
-    }
+exports.setup = function (names) {
+    teamMembers = names;
+};
 
-    files.loadFiles(f.files, function(d) {
-      if (d.error) {
-        console.log(d.message);
-        process.exit(-1);
-      }
-	  
-      data = feature.importData(d.files);
-      if (data.error) {
-  			console.log(data.message);
-  			process.exit(-1);
-  		}
-      data = data.features;
-      exports.updatePdf(function(){});
-      completeCallback();
+exports.update = function () {
+    scanner.getFeatures(function (features) {
+        data = features;
+        exports.updatePdf(function () { });
+        completeCallback();
     });
-  });
+};
+
+exports.refreshData = function (completeCallback) {
+    scanner.getFeatures(function(features) {
+        data = features;
+        exports.updatePdf(function() {});
+        completeCallback();
+    });
 };
 
 exports.currentState = function() {
@@ -34,9 +28,7 @@ exports.currentState = function() {
 };
 
 exports.updatePdf = function(callback) {
-  generate.generatePdf(data, outputPdf, function(){
-    callback();
-  });
+  generate.generatePdf(data, callback);
 };
 
 exports.setItemData = function(featureIndex, scenarioIndex, tester, passing, comment) {
@@ -63,8 +55,18 @@ exports.setItemData = function(featureIndex, scenarioIndex, tester, passing, com
   exports.updatePdf(function(){});
 };
 
+exports.shuffleArray = function(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}
+
 exports.autoAssign = function() {
-  var members = ['Dion','Jay','James','Matthew','Haydon','Daniel'];
+  var members = exports.shuffleArray(teamMembers);
   var sum = 0, pos = 0;
   for (var i = 0; i < data.length; i++) {
     sum += data[i].scenarios.length;

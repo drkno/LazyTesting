@@ -6,7 +6,7 @@
     <ProjectGuid>{227e8a87-0782-47d1-8df8-80e83f1d3562}</ProjectGuid>
     <ProjectHome />
     <ProjectView>ProjectFiles</ProjectView>
-    <StartupFile>server.js</StartupFile>
+    <StartupFile>lazy.js</StartupFile>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
@@ -17,20 +17,25 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Content Include="html\.gitignore" />
+    <Content Include="html\404.html" />
     <Content Include="html\index.html" />
     <Content Include="html\LazyTestingFrontend.iml" />
     <Content Include="html\styles.css" />
-    <Content Include="markdown.css" />
+    <Content Include="styles\markdown.css" />
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Compile Include="feature.js" />
-    <Compile Include="files.js" />
-    <Compile Include="generate.js" />
-    <Compile Include="model.js" />
-    <Compile Include="server.js" />
+    <Compile Include="core\feature.js" />
+    <Compile Include="core\files.js" />
+    <Compile Include="core\generate.js" />
+    <Compile Include="core\scanner.js" />
+    <Compile Include="lazy.js" />
+    <Compile Include="core\model.js" />
+    <Compile Include="core\server.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="html\" />
+    <Folder Include="core\" />
+    <Folder Include="styles\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
