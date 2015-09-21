@@ -13,11 +13,11 @@ exports.generatePdf = function(data, callback) {
 
 			tableData.push([
 				i === 0 ? removeMd(feature.name) : '',
-                removeMd(scenario.name),
-                removeMd(scenario.tester),
+                removeMd(scenario.name).replace(/\|/g, '&#124;'),
+                removeMd(scenario.tester).replace(/\|/g, '&#124;'),
 				scenario.date,
 				scenario.passing ? "Yes" : "No",
-                removeMd(scenario.comment)
+                removeMd(scenario.comment).replace(/\|/g, '&#124;')
 			]);
 		}
 	}
