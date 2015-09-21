@@ -13,6 +13,21 @@ if (!String.prototype.endsWith) {
 	};
 }
 
+function removeDuplicates(a) {
+    var seen = {};
+    var out = [];
+    var len = a.length;
+    var j = 0;
+    for (var i = 0; i < len; i++) {
+        var item = a[i];
+        if (seen[item] !== 1) {
+            seen[item] = 1;
+            out[j++] = item;
+        }
+    }
+    return out;
+}
+
 exports.findFeatures = function(directory, completeCallback) {
 	var finder = new FindFiles({
         rootFolder : directory,
@@ -27,8 +42,8 @@ exports.findFeatures = function(directory, completeCallback) {
 		message: null
 	};
 	
-	finder.on("match", function(path, stat) {
-		data.files.push(path);
+    finder.on("match", function (path, stat) {
+        data.files.push(path);
 	});
 	
 	var errorFunction = function(err, strPath) {
@@ -38,7 +53,8 @@ exports.findFeatures = function(directory, completeCallback) {
 	finder.on("patherror", errorFunction);
 	finder.on("error", errorFunction);
 	
-	finder.on("complete", function() {
+    finder.on("complete", function () {
+        data.files = removeDuplicates(data.files);
 		completeCallback(data);
 	});
 	
@@ -51,7 +67,7 @@ exports.loadFiles = function(files, completeCallback) {
 		error: false,
 		message: null
 	};
-	
+
 	for (var f in files) {
 		var file = files[f];
 		

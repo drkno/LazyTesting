@@ -7,9 +7,56 @@ exports.setup = function (names) {
     teamMembers = names;
 };
 
-exports.update = function () {
+exports.update = function (completeCallback) {
     scanner.getFeatures(function (features) {
-        data = features;
+        var j = 0, i = 0;
+        for (; i < features.length && j < data.length; i++) {
+            if (features[i].name < data[j].name) {
+                data = data.splice(j, 0, features[i]);
+                j++;
+            }
+            else if (features[i].name > data[j].name) {
+                data = data.splice(j, 1);
+                i--;
+            }
+            else {
+                var l = 0, k = 0;
+                for (; k < features[i].scenarios.length; k++) {
+                    var news = features[i].scenarios[k];
+                    var orig = data[j].scenarios[l];
+
+                    if (news.name < orig.name) {
+                        data[j].scenarios = data[j].scenarios.splice(l, 0, news);
+                        l++;
+                    }
+                    else if (news.name > orig.name) {
+                        data[j].scenarios = data[j].scenarios.splice(l, 1);
+                        k--;
+                    } else {
+                        orig.test = news.test;
+                        l++;
+                    }
+                }
+                if (l < data[j].scenarios.length) {
+                    data = data.splice(l, data[j].scenarios.length - l);
+                }
+                else if (l === data[j].scenarios.length && k < features[i].scenarios.length) {
+                    for (; k < features[i].scenarios.length; k++) {
+                        data[j].scenarios.push(features[i].scenarios[k]);
+                    }
+                }
+                j++;
+            }
+        }
+        if (j < data.length) {
+            data = data.splice(j, data.length - j);
+        }
+        else if (j === data.length && i < features.length) {
+            for (; i < features.length; i++) {
+                data.push(features[i]);
+            }
+        }
+
         exports.updatePdf(function () { });
         completeCallback();
     });

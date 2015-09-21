@@ -10,10 +10,11 @@ exports.importData = function(newData) {
 		message: null
 	};
 	
-	try {
-		for (var feature in newData) {
+    try {
+        var l = false;
+        for (var feature in newData) {
 			// parse
-			 var ast = parser.parse(newData[feature]);
+            var ast = parser.parse(newData[feature]);
 			
 			// ensure it is a manual test
 			var manualTest = false;

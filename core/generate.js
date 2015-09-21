@@ -1,5 +1,6 @@
 var markdownpdf = require("markdown-pdf"),
     table = require('markdown-table'),
+    removeMd = require('remove-markdown'),
     output = null,
     style = null;
 
@@ -11,12 +12,12 @@ exports.generatePdf = function(data, callback) {
             var scenario = feature.scenarios[i];
 
 			tableData.push([
-				i === 0 ? feature.name.replace(/\|/g, "&#124;") : '',
-				scenario.name.replace(/\|/g, "&#124;"),
-				scenario.tester.replace(/\|/g, "&#124;"),
+				i === 0 ? removeMd(feature.name) : '',
+                removeMd(scenario.name),
+                removeMd(scenario.tester),
 				scenario.date,
 				scenario.passing ? "Yes" : "No",
-				scenario.comment.replace(/\|/g, "&#124;")
+                removeMd(scenario.comment)
 			]);
 		}
 	}
@@ -27,7 +28,15 @@ exports.generatePdf = function(data, callback) {
 	var sums = {};	
     for (var i = 1; i < tableData.length; i++) {
         if (!sums[tableData[i][2]]) {
-            sums[tableData[i][2]] = 1;
+            if (tableData[i][2] === "" || tableData[i][2] === null) {
+                if (!sums["Nobody"]) {
+                    sums["Nobody"] = 1;
+                } else {
+                    sums["Nobody"]++;
+                }
+            } else {
+                sums[tableData[i][2]] = 1;
+            }
         } else {
             sums[tableData[i][2]]++;
         }
