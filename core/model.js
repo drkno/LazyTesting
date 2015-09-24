@@ -121,12 +121,12 @@ exports.autoAssign = function() {
   for (var i = 0; i < data.length; i++) {
     sum += data[i].scenarios.length;
   }
-  sum /= 6;
+  sum /= members.length;
 
   for (var i = 0; i < data.length; i++) {
     for (var j = 0; j < data[i].scenarios.length; j++) {
       var item = data[i].scenarios[j];
-      item.tester = members[Math.floor(pos / sum) % 6];
+      item.tester = members[Math.floor(pos / sum) % members.length];
       pos++;
     }
   }
