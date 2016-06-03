@@ -15,6 +15,9 @@ First create a configuration file `config.json` based off the following template
 		"Myself",
 		"A friend of mine",
 		"Another Friend"
+	],
+	"testingTags": [
+		"manual"
 	]
 }
 ```

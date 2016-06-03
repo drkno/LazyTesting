@@ -1,7 +1,7 @@
 var Gherkin = require('gherkin');
 var parser = new Gherkin.Parser();
 
-exports.importData = function(newData) {
+exports.importData = function(newData, testingTags) {
 	parser.stopAtFirstError = false;
 
 	var data = {
@@ -9,17 +9,17 @@ exports.importData = function(newData) {
 		error: false,
 		message: null
 	};
-	
+
     try {
         var l = false;
         for (var feature in newData) {
 			// parse
             var ast = parser.parse(newData[feature]);
-			
+
 			// ensure it is a manual test
 			var manualTest = false;
 			for (var tag in ast.tags) {
-				if (ast.tags[tag].name === "@Manual") {
+				if (testingTags.indexOf(ast.tags[tag].name.toLowerCase().substr(1)) !== -1) {
 					manualTest = true;
 					break;
 				}
@@ -27,7 +27,7 @@ exports.importData = function(newData) {
 			if (!manualTest) {
 				continue;
 			}
-			
+
 			// generate our own data tree
 			var scenarios = [];
 			for (var s in ast.scenarioDefinitions) {
@@ -36,7 +36,7 @@ exports.importData = function(newData) {
 				for (var i = 0; i < scenario.steps.length; i++) {
 					test += scenario.steps[i].keyword + " " + scenario.steps[i].text + "\r\n";
 				}
-				
+
 				scenarios.push({
 					name: scenario.name,
 					tester: '',
@@ -46,7 +46,7 @@ exports.importData = function(newData) {
 					passing: false
 				});
 			}
-			
+
 			data.features.push({
 				name: ast.name,
 				scenarios: scenarios
@@ -57,6 +57,6 @@ exports.importData = function(newData) {
 		data.error = true;
 		data.message = e.message;
 	}
-	
+
 	return data;
 };

@@ -1,7 +1,7 @@
 ﻿/*
  * Lazy Testing
  * Automated Manual Testing document generator.
- * 
+ *
  * Copyright 2015 © Matthew Knox. Licensed under the MIT license.
  */
 
@@ -56,9 +56,17 @@ if (!config.style) {
     console.log("[PASS] Found custom styles in config.");
 }
 
+// Check tags
+if (!config.testingTags) {
+    console.log("[FAIL] No tags in config. Defaulting to ['manual'].");
+    config.testingTags = ["manual"];
+} else {
+    console.log("[PASS] Found tags " + config.testingTags + " in config.");
+}
+
 console.log("Tests complete.");
 console.log("Setting up scanner.");
-scanner.setup(config.featureFilesFolder);
+scanner.setup(config.featureFilesFolder, config.testingTags);
 
 console.log("Setting up generator.");
 generator.setup(path.join(__dirname, 'html', 'ManualTesting.pdf'), config.style);
